@@ -34,7 +34,7 @@
 Clone o projeto e acesso a pasta dos arquivos
 
 ```bash
-$ git clone https://github.com/lucasDechenier/api_schedule
+$ git clone https://github.com/v1ctormoll/med_saude.git
 ```
 
 Siga as etapas para instalação
