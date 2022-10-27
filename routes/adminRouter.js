@@ -12,17 +12,7 @@ router.get('/', authUser.admin, (req,res) =>{
     }
 })
 
-router.get('/viewSchedule', authUser.admin, adminController.viewSchedule)
-
 router.post('/login', adminController.login);
-
-router.delete('/complete/schedule/:id', authUser.admin, adminController.completeSchedule);
-
-router.delete('/complete/schedule', authUser.admin, adminController.completeSchedule);
-
-router.delete('/cancel/schedule/:id', authUser.admin, adminController.cancelSchedule);
-
-router.delete('/cancel/schedule', authUser.admin, adminController.cancelSchedule);
 
 module.exports = router; // Cp
 

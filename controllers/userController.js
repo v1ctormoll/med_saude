@@ -2,7 +2,6 @@ const User = require('../models/User')
 const Schedule = require('../models/Schedule')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-const verifySchedule = require('../verify/verifySchedule')
 
 // MiddleWares
 userController = {
@@ -21,6 +20,8 @@ userController = {
         const user = new User({
             name: req.body.name,
             email: req.body.email,
+            cpf: req.body.cpf,
+            birthDate: req.body.birthDate,
             password: bcrypt.hashSync(req.body.password)
         })
         try {
@@ -41,49 +42,24 @@ userController = {
 
         // Verificando Senha
         const passwordAndUserMatch = bcrypt.compareSync(req.body.password, selectedUser.password);
-        if (!passwordAndUserMatch) return res.status(400).send('Email ou senha incorretos')
+        if (!passwordAndUserMatch) return res.status(400).send({message: 'Email ou senha incorretos'})
 
         //criando token
         const token = jwt.sign({ _id: selectedUser._id, admin: selectedUser.admin }, process.env.TOKEN_SECRET)
+        const user = {
+          name: selectedUser.name,
+          email: selectedUser.email,
+          admin: selectedUser.admin,
+          cpf: selectedUser.cpf,
+          birthDate: selectedUser.birthDate,
+          id: selectedUser._id
+        }
         const response = {
+            user,
             authorizationToken: token
         }
         res.send(response);
     },
-
-    // Responsável por visualizar todos os agendamentos realizados de um cliente
-    viewSchedule: async (req, res) => {
-        try{
-            let selectedSchedule = await Schedule.find({userId: req.user._id});
-            res.send(selectedSchedule);
-        }catch (error) {
-            res.send(error)
-        }
-    },
-
-    // Responsável por cancelar o agendamento de um cliente
-    cancelSchedule: async (req, res) => {
-        console.log(req.user);
-        let id = req.params.id;
-        if (!id) {
-            id = req.body.id;
-        }
-
-        const verify = await Schedule.findOne({ _id: id, userId: req.user._id })
-        if (verify == null) {
-            res.status(404).send("Você não criou essa tarefa ou ela não existe");
-        } else {
-            // Verificando se a tarefa a ser cancelada tem menos de 6 horas
-            if(verifySchedule.Cancel(verify)){
-
-                await Schedule.remove(verify)
-                res.send(id);
-            }
-            else{
-                res.send("Não foi possível deletar seu agendamento, falta menos de 6 horas, ou a tarefa já foi iniciada");
-            }
-        }
-    }
 }
 
 module.exports = userController;

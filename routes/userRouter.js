@@ -19,10 +19,4 @@ router.post('/register', userController.register);
 
 router.post('/login', userController.login);
 
-router.get('/viewSchedule',authUser.authenticate, userController.viewSchedule);
-
-router.delete('/cancel/schedule/:id',authUser.authenticate, userController.cancelSchedule);
-
-router.delete('/cancel/schedule',authUser.authenticate, userController.cancelSchedule);
-
 module.exports = router;
